@@ -201,6 +201,29 @@
   .final-msg{text-align:center;}
   .final-msg .rank{font-size:30px; margin-bottom:8px;}
 
+  /* 어려운 단어 설명 — 본문 중 {용어}를 밑줄 표시하고 탭하면 정의 시트가 뜬다 */
+  .term{
+    text-decoration:underline dashed var(--accent-dark); text-underline-offset:3px;
+    cursor:pointer; font-weight:700; color:var(--ink);
+  }
+  .term-backdrop{
+    position:fixed; inset:0; background:rgba(34,28,20,.45); display:none;
+    align-items:flex-end; justify-content:center; z-index:60;
+  }
+  .term-backdrop.open{display:flex;}
+  .term-sheet{
+    background:var(--page); width:100%; max-width:560px; border-radius:16px 16px 0 0;
+    border:1px solid var(--rule); border-bottom:none; padding:20px 20px 26px;
+    animation:sheetUp .26s ease; box-shadow:0 -6px 24px rgba(34,28,20,.2);
+  }
+  @keyframes sheetUp{from{transform:translateY(30px); opacity:0;} to{transform:none; opacity:1;}}
+  .term-sheet h3{font-size:16px; margin:0 0 8px; color:var(--accent-dark);}
+  .term-sheet p{font-size:14.5px; color:var(--ink); font-family:"Noto Sans KR",sans-serif; line-height:1.7;}
+  .term-sheet .term-close{
+    margin-top:12px; width:100%; border:1px solid var(--rule); background:var(--page);
+    border-radius:6px; padding:12px; font-size:14px; font-weight:700; color:var(--sub); cursor:pointer;
+  }
+
   @media (min-width:760px){ body{font-size:17.5px;} }
 </style>
 </head>
@@ -241,7 +264,7 @@
         소문을 믿은 사람들은 유대인 마을을 습격했다.
       </div>
 
-      <label>왜 하필 유대인이 탓을 뒤집어썼을까? 위기 상황에서 사람들은 왜 '이미 미움받던 대상'부터 의심하기 쉬울까?</label>
+      <label>왜 하필 유대인이 <span class="term" onclick="openTerm('희생양')">희생양</span>이 됐을까? 위기 상황에서 사람들은 왜 '이미 미움받던 대상'부터 의심하기 쉬울까?</label>
       <textarea id="plagueTxt" placeholder="네 생각을 써봐"></textarea>
       <button type="button" class="hint-toggle" id="plagueHintToggle">💡 막막하면 힌트 보기</button>
       <div class="hint-box" id="plagueHintBox">생각해봐 — 당시 유대인은 유럽 사회에서 이미 어떤 위치였을까? (힌트: 소수 종교 집단으로 이미 차별과 배척을 받고 있었어.)</div>
@@ -309,15 +332,17 @@
       <div class="decisive-grid" id="decisiveGrid"></div>
       <label>왜 그렇게 생각해?</label>
       <textarea id="decisiveReason" placeholder="이유를 써봐"></textarea>
+      <button type="button" class="hint-toggle" id="decisiveHintToggle">💡 막막하면 힌트 보기</button>
+      <div class="hint-box" id="decisiveHintBox">각 사건이 교황의 '무엇'을 흔들었는지 떠올려봐 — 명분이었는지, 애초 목표 자체였는지, 아니면 실제 힘(군사력)이었는지.</div>
     </div>
 
     <div class="card">
       <span class="badge-chip">마무리 판단 · 2단계</span>
-      <h2>그럼 이 정도면 '중세는 끝나가고 있다'고 볼 수 있을까?</h2>
-      <p class="sub">정답은 없어. 한 줄로 네 판단을 써봐.</p>
-      <textarea class="short" id="finalTxt" placeholder="한 줄로 써봐"></textarea>
+      <h2>교황의 권력은 앞으로 어떻게 될까?</h2>
+      <p class="sub">정답은 없어. 왕의 권력은 어떻게 될지, 교황의 권력은 어떻게 될지 네 추측을 써봐.</p>
+      <textarea class="short" id="finalTxt" placeholder="예: 왕의 권력이 다시 강해질 것 같다. 왜냐하면..."></textarea>
       <button type="button" class="hint-toggle" id="finalHintToggle">💡 막막하면 힌트 보기</button>
-      <div class="hint-box" id="finalHintBox">카노사의 굴욕 때(1077)랑 비교하면, 지금 교황의 처지가 뭐가 달라졌는지 생각해봐.</div>
+      <div class="hint-box" id="finalHintBox"><span class="term" onclick="openTerm('카노사의 굴욕')">카노사의 굴욕</span> 때(1077)는 왕이 교황 앞에 무릎을 꿇었는데, 오늘 본 사건들에서는 반대로 교황이 왕에게 붙잡혔어. 이 흐름이 이어진다면 앞으로 어느 쪽 힘이 세질지 생각해봐.</div>
       <button class="btn btn-primary" id="submitBtn" disabled>제출하기</button>
     </div>
   </div>
@@ -333,6 +358,15 @@
 
 </div>
 
+<!-- 어려운 단어 설명 시트 -->
+<div class="term-backdrop" id="termBackdrop" onclick="if(event.target===this) closeTerm()">
+  <div class="term-sheet">
+    <h3 id="termTitle"></h3>
+    <p id="termBody"></p>
+    <button type="button" class="term-close" onclick="closeTerm()">닫기</button>
+  </div>
+</div>
+
 <script>
 /* ════════════════════════════════════════════════════════
  * CONFIG
@@ -346,21 +380,45 @@ const CONFIG = {
   FINAL_MIN: 4          // 마무리 2단계 한 줄 최소 글자 수
 };
 
+/* ── 어려운 단어 설명 (탭하면 정의 시트가 뜬다) ── */
+const TERMS = {
+  "희생양": "잘못을 진짜로 저지르지 않았어도, 남을 대신해 비난과 처벌을 받는 대상.",
+  "성전": "종교적 명분을 내세운 전쟁. 십자군은 '성지를 되찾는 거룩한 전쟁'이라는 명분을 내세웠어.",
+  "파문": "교회에서 쫓아내고 신자 자격을 빼앗는 것. 크리스트교 사회에서는 아주 무거운 벌이었어.",
+  "교서": "교황이 공식적으로 내리는 문서. 교리나 명령을 담고 있어서 권위가 아주 컸어.",
+  "아나니 사건": "1303년, 프랑스 왕이 보낸 군대가 이탈리아 아나니에서 교황 보니파시오 8세를 붙잡은 사건. 교황이 왕에게 물리적으로 제압당한 충격적인 사건이었어.",
+  "아비뇽 유수": "1309년부터 약 70년간 교황청이 로마를 떠나 프랑스 남부 아비뇽으로 옮겨져, 프랑스 왕의 영향 아래 놓였던 일.",
+  "카노사의 굴욕": "1077년, 신성 로마 제국 황제가 교황에게 파문당하지 않으려고 카노사성 앞에서 사흘간 눈밭에 서서 용서를 빈 사건. 교황권이 가장 강했던 시절을 상징해."
+};
+function renderTerms(text){
+  return text.replace(/\{([^}]+)\}/g, (_, w)=>
+    TERMS[w] ? `<span class="term" onclick="openTerm('${w}')">${w}</span>` : w);
+}
+function openTerm(w){
+  document.getElementById("termTitle").textContent = w;
+  document.getElementById("termBody").textContent = TERMS[w] || "";
+  document.getElementById("termBackdrop").classList.add("open");
+}
+function closeTerm(){
+  document.getElementById("termBackdrop").classList.remove("open");
+}
+
 /* ── 사건 카드 3장 (교과서 근거 — 핸드오프 §3, 효니 확인 완료: 카드①은 "방관 vs 개입 시도" 축) ──
  * 각 옵션의 delta는 모두 음수 — 어떤 선택을 해도 지수는 떨어진다(사실 왜곡 방지, 핸드오프 §3 절대 원칙).
  * real:true 옵션 = 실제 역사에서 있었던 대응. reveal 문구는 선택과 무관하게 항상 동일하게 노출한다
  *   (이 게임은 "다른 선택을 했다면 어떻게 됐을까"를 지어내는 대체역사 게임이 아니라, 예측 후 실제 역사를
- *   확인하는 게임이라 reveal은 사실 그대로 고정한다). */
+ *   확인하는 게임이라 reveal은 사실 그대로 고정한다).
+ * context/reveal 안의 {단어}는 TERMS 사전과 연결돼 탭하면 뜻이 뜬다(renderCard/chooseOption에서 innerHTML로 렌더). */
 const CARDS = [
   {
     era: "1202~1204",
     title: "4차 십자군, 콘스탄티노폴리스 약탈",
-    context: "성지로 가야 할 십자군이 방향을 바꿔 같은 크리스트교 국가인 비잔티움 제국의 수도 콘스탄티노폴리스를 약탈했다. '성전'을 명분으로 모은 군대가 크리스트교 형제 나라를 공격한 것이다. 교황은 이 사건을 어떻게 처리할까?",
+    context: "성지로 가야 할 십자군이 방향을 바꿔 같은 크리스트교 국가인 비잔티움 제국의 수도 콘스탄티노폴리스를 약탈했다. '{성전}'을 명분으로 모은 군대가 크리스트교 형제 나라를 공격한 것이다. 교황은 이 사건을 어떻게 처리할까?",
     options: [
       { key: "A", label: "방관한다 — 눈감아 준다", delta: -10, real: false },
       { key: "B", label: "막으려 한다 — 경고와 파문으로 제지 시도", delta: -15, real: true }
     ],
-    reveal: "인노첸시오 3세는 십자군에게 크리스트교 국가를 공격하지 말라고 경고했고, 이후 참여자들을 파문하기까지 했다. 하지만 이미 벌어진 약탈은 되돌릴 수 없었고, '성지 탈환'이라는 명분에는 스스로 낸 큰 흠집만 남았다."
+    reveal: "인노첸시오 3세는 십자군에게 크리스트교 국가를 공격하지 말라고 경고했고, 이후 참여자들을 {파문}하기까지 했다. 하지만 이미 벌어진 약탈은 되돌릴 수 없었고, '성지 탈환'이라는 명분에는 스스로 낸 큰 흠집만 남았다."
   },
   {
     era: "12세기 말 ~",
@@ -380,7 +438,7 @@ const CARDS = [
       { key: "A", label: "강하게 반발한다 — 교서로 맞선다", delta: -25, real: true },
       { key: "B", label: "타협한다 — 양보한다", delta: -20, real: false }
     ],
-    reveal: "교황 보니파시오 8세는 교서(우남 상탐)로 강하게 반발했다. 그러나 프랑스 왕은 군대를 보내 교황을 붙잡았고(아나니 사건), 뒤이어 교황청 자체가 아비뇽으로 옮겨져 프랑스 왕의 통제 아래 놓였다."
+    reveal: "교황 보니파시오 8세는 {교서}(우남 상탐)로 강하게 반발했다. 그러나 프랑스 왕은 군대를 보내 교황을 붙잡았고({아나니 사건}), 뒤이어 교황청 자체가 아비뇽으로 옮겨져({아비뇽 유수}) 프랑스 왕의 통제 아래 놓였다."
   }
 ];
 
@@ -419,7 +477,7 @@ startBtn.addEventListener("click", ()=>{
   setHeader("plague",
     "2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시 · 03",
     "흑사병, 그리고 희생양",
-    "왜 하필 유대인이 탓을 뒤집어썼을까?");
+    "왜 하필 유대인이 희생양이 됐을까?");
   showScreen("screen-plague");
 });
 
@@ -480,7 +538,7 @@ function renderCard(){
   document.getElementById("cardBadge").textContent = `카드 ${cardIdx+1} / ${CARDS.length}`;
   document.getElementById("cardEra").textContent = c.era;
   document.getElementById("cardTitle").textContent = c.title;
-  document.getElementById("cardContext").textContent = c.context;
+  document.getElementById("cardContext").innerHTML = renderTerms(c.context);
   updateIndexBar();
 
   revealBox.classList.remove("open");
@@ -513,7 +571,7 @@ function chooseOption(opt, btn){
   const c = CARDS[cardIdx];
   myChoices.push({ key: opt.key, label: opt.label, delta: opt.delta, real: opt.real, title: c.title });
 
-  revealText.textContent = c.reveal;
+  revealText.innerHTML = renderTerms(c.reveal);
   revealBox.classList.add("open");
   nextCardBtn.style.display = "block";
 }
@@ -539,7 +597,7 @@ function showResult(){
   setHeader("papal",
     "2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시",
     "내 지수 vs 실제 역사",
-    "그리고, 이 모든 게 중세를 끝낸 걸까?");
+    "그리고, 교황의 앞날은 어떻게 될까?");
 
   const realFinal = realFinalIndex();
   document.getElementById("myFinalNum").textContent = currentIndex;
@@ -569,7 +627,10 @@ DECISIVE_EVENTS.forEach(ev=>{
   decisiveGrid.appendChild(btn);
 });
 
-/* ── 힌트 토글(2단계) ── */
+/* ── 힌트 토글(마무리 1·2단계) ── */
+document.getElementById("decisiveHintToggle").addEventListener("click", ()=>{
+  document.getElementById("decisiveHintBox").classList.toggle("open");
+});
 document.getElementById("finalHintToggle").addEventListener("click", ()=>{
   document.getElementById("finalHintBox").classList.toggle("open");
 });

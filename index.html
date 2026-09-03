@@ -98,13 +98,15 @@
   .sub{color:var(--sub); font-size:14.5px; font-family:"Noto Sans KR",sans-serif; line-height:1.65;}
   .era{font-family:"Noto Sans KR",sans-serif; font-size:13px; font-weight:700; color:var(--accent-dark);}
 
-  /* 03 파트: 사료 카드 — 실사/그래픽 폭력 묘사 대신 실루엣 SVG 일러스트 + 캡션으로 구성 */
+  /* 03 파트: 사료 캡션 카드 — 이미지는 보류(그래픽 삽화·SVG 실루엣 둘 다 효니 검토 결과 반려,
+     추후 방향 정해지면 다시 논의). 그때까지는 절제된 텍스트 비네트로 처리 */
   .source-box{
-    background:var(--ash-dark); border-radius:6px; overflow:hidden; margin-bottom:14px;
+    background:var(--ash-dark); border-radius:6px; padding:20px 18px;
+    margin-bottom:14px;
   }
-  .source-illust{display:block; width:100%; height:auto; aspect-ratio:400/190;}
+  .source-icon{font-size:26px; display:block; margin-bottom:8px;}
   .source-caption{
-    color:#eee9dc; padding:16px 18px; line-height:1.8; font-size:15.5px;
+    color:#eee9dc; line-height:1.8; font-size:15.5px;
   }
 
   label{
@@ -261,68 +263,10 @@
     <div class="card">
       <span class="badge-chip">03 · 흑사병과 희생양</span>
       <div class="source-box">
-        <!-- 실사/그래픽 폭력 묘사 대신 실루엣 구도로 무게감 전달 (효니 피드백: 안전상 이유+중2 대상
-             모두 고려해 그래픽한 묘사는 피하고, 군중의 규모·불빛·그림자 대비로 긴장감을 표현).
-             왼쪽 웅크린 인물의 뾰족모자는 유덴후트(Judenhut) — 이 시대 유럽에서 유대인을 표시하던
-             실제 복식 표지. 나치 시대의 노란별 배지를 쓰면 시대착오라 이걸로 대체했다. -->
-        <svg class="source-illust" viewBox="0 0 400 190" preserveAspectRatio="xMidYMax slice" role="img" aria-label="횃불을 든 군중이 웅크린 가족에게 다가오는 모습">
-          <defs>
-            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#1c1a22"/>
-              <stop offset="65%" stop-color="#2c2118"/>
-              <stop offset="100%" stop-color="#4a2210"/>
-            </linearGradient>
-            <radialGradient id="flameGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffcf6b" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#ffcf6b" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <rect x="0" y="0" width="400" height="190" fill="url(#skyGrad)"/>
-          <rect x="0" y="150" width="400" height="40" fill="#100c08"/>
-
-          <!-- 오른쪽: 횃불 든 군중(실루엣) -->
-          <g fill="#0f0d10">
-            <path d="M260 150 L272 108 L282 150 Z"/>
-            <path d="M280 150 L294 100 L306 150 Z"/>
-            <path d="M304 150 L316 112 L328 150 Z"/>
-            <path d="M326 150 L340 96 L354 150 Z"/>
-            <path d="M352 150 L364 110 L376 150 Z"/>
-          </g>
-          <g stroke="#0f0d10" stroke-width="3">
-            <line x1="272" y1="108" x2="266" y2="80"/>
-            <line x1="294" y1="100" x2="288" y2="70"/>
-            <line x1="316" y1="112" x2="322" y2="82"/>
-            <line x1="340" y1="96" x2="334" y2="66"/>
-            <line x1="364" y1="110" x2="370" y2="84"/>
-          </g>
-          <g>
-            <circle cx="266" cy="76" r="16" fill="url(#flameGlow)"/>
-            <circle cx="288" cy="66" r="16" fill="url(#flameGlow)"/>
-            <circle cx="322" cy="78" r="16" fill="url(#flameGlow)"/>
-            <circle cx="334" cy="62" r="16" fill="url(#flameGlow)"/>
-            <circle cx="370" cy="80" r="16" fill="url(#flameGlow)"/>
-            <path d="M266 80 q-4 -10 0 -18 q4 8 0 18Z" fill="#ffb23e"/>
-            <path d="M288 70 q-4 -10 0 -18 q4 8 0 18Z" fill="#ffb23e"/>
-            <path d="M322 82 q-4 -10 0 -18 q4 8 0 18Z" fill="#ffb23e"/>
-            <path d="M334 66 q-4 -10 0 -18 q4 8 0 18Z" fill="#ffb23e"/>
-            <path d="M370 84 q-4 -10 0 -18 q4 8 0 18Z" fill="#ffb23e"/>
-          </g>
-
-          <!-- 왼쪽: 문가에 웅크린 가족(실루엣), 어른 머리 위 뾰족모자(유덴후트) -->
-          <path d="M40 150 L40 96 Q60 74 80 96 L80 150 Z" fill="#050403"/>
-          <g fill="#0f0d10">
-            <path d="M52 150 Q52 118 66 118 Q80 118 80 150 Z"/>
-            <path d="M66 118 L58 96 L74 96 Z"/>
-            <circle cx="66" cy="112" r="9"/>
-            <path d="M42 150 Q42 128 52 128 Q60 128 60 150 Z"/>
-            <circle cx="51" cy="123" r="7"/>
-          </g>
-
-          <rect x="0" y="150" width="400" height="4" fill="#000" opacity=".35"/>
-        </svg>
+        <span class="source-icon">🕯️</span>
         <div class="source-caption">
           흑사병이 휩쓸던 어느 마을 — "유대인이 우물에 독을 풀었다"는 소문이 삽시간에 퍼졌다.
-          소문을 믿은 사람들은 횃불을 들고 유대인 마을로 몰려갔다.
+          소문을 믿은 사람들은 유대인 마을을 습격했다.
         </div>
       </div>
 
@@ -402,9 +346,9 @@
       <span class="badge-chip">마무리 판단 · 2단계</span>
       <h2>교황의 권력은 앞으로 어떻게 될까?</h2>
       <p class="sub">정답은 없어. 왕의 권력은 어떻게 될지, 교황의 권력은 어떻게 될지 네 추측을 써봐.</p>
-      <textarea class="short" id="finalTxt" placeholder="예: 왕의 권력이 다시 강해질 것 같다. 왜냐하면..."></textarea>
+      <textarea class="short" id="finalTxt" placeholder="예: ___의 권력이 앞으로 ___할 것 같다. 왜냐하면 ___이기 때문이다."></textarea>
       <button type="button" class="hint-toggle" id="finalHintToggle">💡 막막하면 힌트 보기</button>
-      <div class="hint-box" id="finalHintBox"><span class="term" onclick="openTerm('카노사의 굴욕')">카노사의 굴욕</span> 때(1077)는 왕이 교황 앞에 무릎을 꿇었는데, 오늘 본 사건들에서는 반대로 교황이 왕에게 붙잡혔어. 이 흐름이 이어진다면 앞으로 어느 쪽 힘이 세질지 생각해봐.</div>
+      <div class="hint-box" id="finalHintBox"><span class="term" onclick="openTerm('카노사의 굴욕')">카노사의 굴욕</span> 때(1077) 교황과 왕의 관계가 어땠는지, 오늘 본 세 사건에서 교황과 왕의 관계는 어땠는지 비교해봐.</div>
       <button class="btn btn-primary" id="submitBtn" disabled>제출하기</button>
     </div>
   </div>

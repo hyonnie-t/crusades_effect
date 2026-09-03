@@ -7,53 +7,75 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
+  /*
+   * 색 설계 메모(효니 피드백 반영 — "웹앱 색상·디자인을 내용에 맞게"):
+   * crusades(01 활동)의 밝은 양피지+금박 톤을 그대로 재사용하지 않고, 이 웹앱 두 파트의
+   * 내용에 맞춰 두 가지 무드를 분리했다.
+   *  - 03 파트(흑사병·희생양): 잿빛·소각 이미지의 "ash" 톤 — 무겁고 가라앉은 분위기.
+   *  - 04 파트(교황권 게임)+결과: 금박이 점점 빛을 잃어가는 "tarnished gold" 톤.
+   *    권위 지수 막대 색 자체가 지수가 떨어질수록 금색→잿빛으로 실시간 보간된다(decayColor()).
+   *    "교황권이 빛바래 간다"는 내용을 색으로도 체감시키기 위함.
+   * body에 mode-plague / mode-papal 클래스를 토글해 헤더·포인트 컬러가 파트별로 바뀐다.
+   */
   :root{
-    /* crusades 저장소(같은 1차시 01 활동)와 색감 통일 — "낡은 역사책 페이지" 톤 */
-    --paper:#f3ead2;
-    --page:#fffaef;
-    --ink:#241a10;
-    --sub:#77664c;
-    --rule:#d9c79a;
-    --navy:#7c2018;
-    --navy-dark:#2a0f0c;
-    --ochre:#a3792c;
-    --ochre-dark:#7c5a1e;
-    --ochre-pale:#f1e3bf;
-    --wash:#f5e6df;
-    --seal:#5b1210;
-    --good:#3d6b3d;
-    --bad:#7c2018;
+    --paper:#efe6d3;
+    --page:#f9f4e4;
+    --ink:#221c14;
+    --sub:#6b5f4d;
+    --rule:#cbb98a;
+
+    --crimson:#6e1423;
+    --crimson-dark:#3d0a12;
+    --gold:#ad8a3d;
+    --gold-dark:#7c611f;
+    --gold-pale:#ece0bf;
+
+    --ash:#7d786a;
+    --ash-dark:#4b473c;
+    --ash-pale:#e4e0d4;
+
+    --accent:var(--gold);
+    --accent-dark:var(--gold-dark);
+    --accent-pale:var(--gold-pale);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
     font-family:"Noto Serif KR","Noto Sans KR","Malgun Gothic",serif;
-    background:radial-gradient(ellipse 80% 60% at 50% 0%, #f9f1da 0%, var(--paper) 55%, #e9d9ae 100%) fixed;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, #f7f0dc 0%, var(--paper) 55%, #e6d8ae 100%) fixed;
     color:var(--ink);
     font-size:17px;
     font-weight:400;
     line-height:1.75;
     -webkit-tap-highlight-color:transparent;
+    transition:background .6s ease;
+  }
+  body.mode-plague{
+    --accent:var(--ash);
+    --accent-dark:var(--ash-dark);
+    --accent-pale:var(--ash-pale);
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, #efece4 0%, #e3ddce 55%, #d3ccba 100%) fixed;
   }
   .ui{font-family:"Noto Sans KR",sans-serif;}
 
   .preview-banner{
-    background:var(--seal); color:#f7ece7; text-align:center;
+    background:var(--crimson-dark); color:#f7ece7; text-align:center;
     font-family:"Noto Sans KR",sans-serif; font-size:12.5px; font-weight:700; letter-spacing:.3px;
     padding:9px; position:sticky; top:0; z-index:20; display:none;
   }
 
   .header{
-    background:var(--navy-dark); color:#f2e6c8; padding:28px 20px 22px; text-align:center;
-    border-bottom:3px solid var(--ochre);
+    background:var(--ink); color:#f2e6c8; padding:26px 20px 22px; text-align:center;
+    border-bottom:3px solid var(--accent); transition:border-color .6s ease, background .6s ease;
   }
+  body.mode-plague .header{ background:#2a281f; color:#e7e2d3; }
   .header .eyebrow{
     font-family:"Noto Sans KR",sans-serif; font-size:12px; font-weight:700;
-    letter-spacing:1.6px; color:#d8b96f; opacity:.9;
+    letter-spacing:1.6px; color:var(--accent-pale); opacity:.85;
   }
-  .header .header-rule{width:34px; height:1px; background:var(--ochre); margin:14px auto; opacity:.8;}
-  .header h1{margin:0 0 8px; font-size:21px; font-weight:700; line-height:1.45;}
-  .header p{margin:0; font-size:14px; font-style:italic; color:#cbb98a; opacity:.9;}
+  .header .header-rule{width:34px; height:1px; background:var(--accent); margin:14px auto; opacity:.85;}
+  .header h1{margin:0 0 8px; font-size:20px; font-weight:700; line-height:1.45;}
+  .header p{margin:0; font-size:13.5px; font-style:italic; color:#cbc3a8; opacity:.9;}
 
   .wrap{max-width:640px; margin:0 auto; padding:20px 16px 90px;}
   .screen{display:none;}
@@ -61,19 +83,27 @@
   @keyframes fadeUp{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
   .card{
-    background:var(--page); border:1px solid var(--rule); border-top:3px solid var(--ochre);
+    background:var(--page); border:1px solid var(--rule); border-top:3px solid var(--accent);
     border-radius:6px; padding:24px 20px; margin-bottom:16px;
-    box-shadow:0 1px 2px rgba(36,26,16,0.05), 0 10px 24px rgba(36,26,16,0.06);
+    box-shadow:0 1px 2px rgba(34,28,20,0.05), 0 10px 24px rgba(34,28,20,0.06);
+    transition:border-color .6s ease;
   }
   .badge-chip{
-    display:inline-block; color:var(--navy); font-family:"Noto Sans KR",sans-serif;
+    display:inline-block; color:var(--accent-dark); font-family:"Noto Sans KR",sans-serif;
     font-size:12px; font-weight:800; letter-spacing:1.4px; padding:0 0 7px; margin-bottom:14px;
-    border-bottom:1px solid var(--ochre);
+    border-bottom:1px solid var(--accent); transition:border-color .6s ease, color .6s ease;
   }
   h2{font-size:19px; margin:0 0 10px; font-weight:700; line-height:1.5;}
   p{margin:0 0 10px;}
   .sub{color:var(--sub); font-size:14.5px; font-family:"Noto Sans KR",sans-serif; line-height:1.65;}
-  .era{font-family:"Noto Sans KR",sans-serif; font-size:13px; font-weight:700; color:var(--ochre-dark);}
+  .era{font-family:"Noto Sans KR",sans-serif; font-size:13px; font-weight:700; color:var(--accent-dark);}
+
+  /* 03 파트: 사료 캡션 카드 — 실제 삽화 대신 절제된 텍스트 비네트로 처리 */
+  .source-box{
+    background:var(--ash-dark); color:#eee9dc; border-radius:6px; padding:20px 18px;
+    margin-bottom:14px; line-height:1.8; font-size:15.5px;
+  }
+  .source-box .source-icon{font-size:26px; display:block; margin-bottom:8px;}
 
   label{
     display:block; font-family:"Noto Sans KR",sans-serif; font-weight:700; color:var(--sub);
@@ -83,25 +113,26 @@
     width:100%; padding:14px 15px; font-size:17px; font-family:inherit;
     border:1px solid var(--rule); border-radius:6px; background:var(--page); min-height:48px;
   }
-  input:focus{outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(124,32,24,0.1);}
+  input:focus{outline:none; border-color:var(--accent-dark); box-shadow:0 0 0 3px rgba(124,32,24,0.08);}
   textarea{
     width:100%; min-height:90px; padding:14px 15px; font-size:16.5px;
     border:1px solid var(--rule); border-radius:6px; background:var(--page);
     resize:vertical; font-family:inherit; line-height:1.65;
   }
-  textarea:focus{outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(124,32,24,0.1);}
+  textarea:focus{outline:none; border-color:var(--accent-dark); box-shadow:0 0 0 3px rgba(124,32,24,0.08);}
+  textarea.short{min-height:56px;}
 
   .btn{
     display:block; width:100%; padding:15px 20px; font-size:16px;
     font-family:"Noto Sans KR",sans-serif; font-weight:700; letter-spacing:.3px;
     border:none; border-radius:6px; cursor:pointer; min-height:50px; margin-top:14px;
-    transition:transform .1s ease;
+    transition:transform .1s ease, background .6s ease;
   }
   .btn:active{transform:scale(0.98);}
-  .btn-primary{background:var(--navy); color:#faf1de; box-shadow:0 3px 10px rgba(124,32,24,0.28);}
-  .btn-primary:disabled{background:#cdbfa2; color:#fff8ea; cursor:not-allowed; box-shadow:none;}
+  .btn-primary{background:var(--ink); color:#f5ecd6; box-shadow:0 3px 10px rgba(34,28,20,0.28);}
+  .btn-primary:disabled{background:#cfc7ae; color:#fff8ea; cursor:not-allowed; box-shadow:none;}
 
-  /* 권위 지수 표시 — 카드 화면 전체에서 위쪽에 고정 노출 */
+  /* 권위 지수 표시 — 04 파트 전체에서 위쪽에 고정 노출, 색이 지수에 따라 보간됨(JS) */
   .index-track{
     background:var(--page); border:1px solid var(--rule); border-radius:6px;
     padding:14px 16px; margin-bottom:16px;
@@ -111,44 +142,46 @@
     font-family:"Noto Sans KR",sans-serif; font-size:12.5px; font-weight:700; color:var(--sub);
     margin-bottom:8px;
   }
-  .index-track .index-num{font-size:16px; font-weight:800; color:var(--navy);}
-  .bar-outer{background:var(--ochre-pale); border-radius:5px; height:16px; overflow:hidden;}
+  .index-track .index-num{font-size:16px; font-weight:800; color:var(--gold-dark);}
+  .bar-outer{background:var(--gold-pale); border-radius:5px; height:16px; overflow:hidden;}
   .bar-inner{
-    background:linear-gradient(90deg, var(--navy), var(--ochre)); height:100%;
-    border-radius:5px; transition:width .8s cubic-bezier(.3,.8,.4,1);
+    background:var(--gold); height:100%;
+    border-radius:5px; transition:width .8s cubic-bezier(.3,.8,.4,1), background-color .8s ease;
     width:100%;
   }
-  .bar-inner.compare{background:linear-gradient(90deg, #8c7f68, #b9af9b);}
+  .bar-inner.compare{background:var(--ash);}
 
-  .opt-btn{
+  .opt-btn, .select-btn{
     display:block; width:100%; text-align:left; background:var(--page); border:1px solid var(--rule);
     border-radius:6px; padding:14px 16px; margin-top:10px; font-family:"Noto Sans KR",sans-serif;
     font-size:15.5px; font-weight:700; color:var(--ink); cursor:pointer; min-height:50px;
   }
-  .opt-btn:active{transform:scale(0.99);}
-  .opt-btn.chosen{border-color:var(--navy); background:var(--wash);}
+  .opt-btn:active, .select-btn:active{transform:scale(0.99);}
+  .opt-btn.chosen, .select-btn.chosen{border-color:var(--accent-dark); background:var(--accent-pale);}
   .opt-btn:disabled{cursor:default;}
   .opt-btn:disabled:not(.chosen){opacity:.55;}
 
   .reveal-box{
-    display:none; background:var(--ochre-pale); border-radius:0 6px 6px 0; border-left:3px solid var(--ochre);
+    display:none; background:var(--gold-pale); border-radius:0 6px 6px 0; border-left:3px solid var(--gold-dark);
     padding:14px 15px; font-size:14.5px; color:var(--ink); margin-top:14px; line-height:1.75;
   }
   .reveal-box.open{display:block;}
   .reveal-box .reveal-tag{
-    font-family:"Noto Sans KR",sans-serif; font-size:12px; font-weight:800; color:var(--ochre-dark);
+    font-family:"Noto Sans KR",sans-serif; font-size:12px; font-weight:800; color:var(--gold-dark);
     letter-spacing:.3px; margin-bottom:6px; display:block;
   }
 
   .hint-toggle{
     display:inline-flex; align-items:center; gap:6px;
-    background:none; border:none; border-bottom:1px dashed var(--navy); color:var(--navy);
+    background:none; border:none; border-bottom:1px dashed var(--accent-dark); color:var(--accent-dark);
     font-family:"Noto Sans KR",sans-serif; font-size:13px; font-weight:700; padding:8px 0 6px;
-    cursor:pointer; margin:14px 0 0;
+    cursor:pointer; margin:14px 0 0; transition:color .6s ease, border-color .6s ease;
   }
   .hint-box{
-    display:none; background:var(--ochre-pale); border-radius:0 6px 6px 0; border-left:3px solid var(--ochre);
+    display:none; border-radius:0 6px 6px 0; border-left:3px solid var(--accent-dark);
+    background:var(--accent-pale);
     padding:13px 15px; font-size:14px; font-style:italic; color:var(--sub); margin-top:8px; line-height:1.7;
+    transition:background .6s ease, border-color .6s ease;
   }
   .hint-box.open{display:block;}
 
@@ -159,9 +192,11 @@
   }
   .footnote{
     font-family:"Noto Sans KR",sans-serif; font-size:13px; color:var(--sub);
-    background:var(--paper); border:1px dashed var(--ochre); border-radius:6px;
+    background:var(--paper); border:1px dashed var(--ash); border-radius:6px;
     padding:11px 13px; margin-top:14px; line-height:1.65;
   }
+  .decisive-grid{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+  .decisive-grid .select-btn{flex:1 1 auto; min-width:130px; margin-top:0; text-align:center;}
 
   .final-msg{text-align:center;}
   .final-msg .rank{font-size:30px; margin-bottom:8px;}
@@ -173,11 +208,11 @@
 
 <div class="preview-banner" id="previewBanner">🔍 미리보기 모드 — 제출해도 기록에 안 남아요</div>
 
-<div class="header">
-  <div class="eyebrow">2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시</div>
+<div class="header" id="pageHeader">
+  <div class="eyebrow" id="headerEyebrow">2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시</div>
   <div class="header-rule"></div>
-  <h1>정점에 달했던 교황권, 왜 흔들리기 시작했을까?</h1>
-  <p>사건이 벌어질 때마다 교황이라면 어떻게 대응했을지 골라보자</p>
+  <h1 id="headerTitle">흑사병, 그리고 무너지는 권위</h1>
+  <p id="headerSub">03 흑사병과 희생양 → 04 교황권 게임, 순서대로 이어져</p>
 </div>
 
 <div class="wrap">
@@ -187,7 +222,7 @@
     <div class="card">
       <span class="badge-chip">시작하기</span>
       <h2>먼저 정보를 입력해줘</h2>
-      <p class="sub">교황권 지수는 100에서 시작해. 세 가지 사건을 만날 때마다 네가 고른 대응에 따라 지수가 움직여. 어떤 선택을 해도 지수는 전체적으로 떨어져 — 이 시기 교황권이 실제로 그랬으니까.</p>
+      <p class="sub">오늘은 두 이야기를 잇달아 만나. 먼저 흑사병이 휩쓸던 마을의 이야기, 그다음 교황권이 흔들리는 세 사건이야.</p>
       <label>학번</label>
       <input type="text" id="studentId" inputmode="numeric" maxlength="5" placeholder="예: 20305">
       <label>이름</label>
@@ -196,7 +231,36 @@
     </div>
   </div>
 
-  <!-- 화면 1: 카드(사건) 진행 -->
+  <!-- 화면 1: 03 파트 — 흑사병과 희생양 -->
+  <div class="screen" id="screen-plague">
+    <div class="card">
+      <span class="badge-chip">03 · 흑사병과 희생양</span>
+      <div class="source-box">
+        <span class="source-icon">🕯️</span>
+        흑사병이 휩쓸던 어느 마을 — "유대인이 우물에 독을 풀었다"는 소문이 삽시간에 퍼졌다.
+        소문을 믿은 사람들은 유대인 마을을 습격했다.
+      </div>
+
+      <label>왜 하필 유대인이 탓을 뒤집어썼을까? 위기 상황에서 사람들은 왜 '이미 미움받던 대상'부터 의심하기 쉬울까?</label>
+      <textarea id="plagueTxt" placeholder="네 생각을 써봐"></textarea>
+      <button type="button" class="hint-toggle" id="plagueHintToggle">💡 막막하면 힌트 보기</button>
+      <div class="hint-box" id="plagueHintBox">생각해봐 — 당시 유대인은 유럽 사회에서 이미 어떤 위치였을까? (힌트: 소수 종교 집단으로 이미 차별과 배척을 받고 있었어.)</div>
+
+      <button class="btn btn-primary" id="toBridgeBtn" disabled>다음 →</button>
+    </div>
+  </div>
+
+  <!-- 화면 2: 03→04 연결 -->
+  <div class="screen" id="screen-bridge">
+    <div class="card">
+      <span class="badge-chip">잠깐, 그런데</span>
+      <h2>성직자도, 영주도 흑사병을 피하지 못했다</h2>
+      <p class="sub">사람들은 그들도 똑같이 죽어 가는 걸 두 눈으로 지켜봤어. 그렇다면 교회의 권위는 어떻게 됐을까?</p>
+      <button class="btn btn-primary" id="toCardBtn">04. 교황권 게임 시작하기 →</button>
+    </div>
+  </div>
+
+  <!-- 화면 3: 04 파트 — 카드(사건) 진행 -->
   <div class="screen" id="screen-card">
     <div class="index-track">
       <div class="index-label"><span>⛪ 교황권 지수</span><span class="index-num" id="indexNum">100</span></div>
@@ -220,7 +284,7 @@
     </div>
   </div>
 
-  <!-- 화면 2: 결과 -->
+  <!-- 화면 4: 결과 + 마무리 판단 -->
   <div class="screen" id="screen-result">
     <div class="card">
       <span class="badge-chip">결과</span>
@@ -239,17 +303,26 @@
     </div>
 
     <div class="card">
-      <span class="badge-chip">마무리 판단</span>
-      <h2>십자군 전쟁이 중세를 끝낸 사건이라고 할 수 있을까, 아니면 여러 원인 중 하나일 뿐일까?</h2>
-      <p class="sub">정답은 없어. 지금까지 본 세 사건을 근거로 네 판단을 한 줄로 써봐.</p>
-      <textarea id="judgeTxt" placeholder="네 판단을 써봐"></textarea>
-      <button type="button" class="hint-toggle" id="hintToggle">💡 막막하면 힌트 보기</button>
-      <div class="hint-box" id="hintBox">카노사의 굴욕 때(1077)랑 비교하면, 지금 교황의 처지가 뭐가 달라졌는지 생각해봐.</div>
+      <span class="badge-chip">마무리 판단 · 1단계</span>
+      <h2>제일 결정적이었던 사건은?</h2>
+      <p class="sub">오늘 본 사건들 중, 교황권 몰락에 제일 결정적이었던 하나를 고르고 이유를 써봐.</p>
+      <div class="decisive-grid" id="decisiveGrid"></div>
+      <label>왜 그렇게 생각해?</label>
+      <textarea id="decisiveReason" placeholder="이유를 써봐"></textarea>
+    </div>
+
+    <div class="card">
+      <span class="badge-chip">마무리 판단 · 2단계</span>
+      <h2>그럼 이 정도면 '중세는 끝나가고 있다'고 볼 수 있을까?</h2>
+      <p class="sub">정답은 없어. 한 줄로 네 판단을 써봐.</p>
+      <textarea class="short" id="finalTxt" placeholder="한 줄로 써봐"></textarea>
+      <button type="button" class="hint-toggle" id="finalHintToggle">💡 막막하면 힌트 보기</button>
+      <div class="hint-box" id="finalHintBox">카노사의 굴욕 때(1077)랑 비교하면, 지금 교황의 처지가 뭐가 달라졌는지 생각해봐.</div>
       <button class="btn btn-primary" id="submitBtn" disabled>제출하기</button>
     </div>
   </div>
 
-  <!-- 화면 3: 완료 -->
+  <!-- 화면 5: 완료 -->
   <div class="screen" id="screen-done">
     <div class="card final-msg">
       <div class="rank">📜</div>
@@ -266,9 +339,11 @@
  * ════════════════════════════════════════════════════════ */
 const CONFIG = {
   SHEET_WEBAPP_URL: "https://script.google.com/macros/s/AKfycbyXSjCfWY_HiZFqW_OBR-FQDoIfF1z_STqyKWUI31MacHeY3u7hbirFSFDvW-5yuUHaJQ/exec",
-  GAME_NAME: "주제16_교황권게임",   // config.js CURRICULUM/커리큘럼 시트의 activity id와 반드시 일치시킬 것
+  GAME_NAME: "주제16_0304_흑사병교황권게임",   // config.js CURRICULUM/커리큘럼 시트의 activity id와 반드시 일치시킬 것(03+04 통합 활동 하나로 등록)
   START_INDEX: 100,
-  MIN_JUDGE_LEN: 8
+  PLAGUE_MIN: 10,      // 03 판단쓰기 최소 글자 수
+  REASON_MIN: 8,       // 마무리 1단계 이유 최소 글자 수
+  FINAL_MIN: 4          // 마무리 2단계 한 줄 최소 글자 수
 };
 
 /* ── 사건 카드 3장 (교과서 근거 — 핸드오프 §3, 효니 확인 완료: 카드①은 "방관 vs 개입 시도" 축) ──
@@ -309,15 +384,26 @@ const CARDS = [
   }
 ];
 
+/* 마무리 판단 1단계 — 결정적 사건 선택지(흑사병은 게임 카드가 아니지만 판단 대상에는 포함, 핸드오프 §5) */
+const DECISIVE_EVENTS = ["콘스탄티노폴리스 약탈", "예루살렘 탈환 실패", "흑사병", "아비뇽 유수"];
+
 let cardIdx = 0;
 let currentIndex = CONFIG.START_INDEX;
-const myChoices = []; // { key, delta, real, label }
+const myChoices = []; // { key, delta, real, label, title }
+let decisiveEvent = null;
 
 /* ── 화면 전환 ── */
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function setHeader(mode, eyebrow, title, sub){
+  document.body.classList.toggle("mode-plague", mode === "plague");
+  document.getElementById("headerEyebrow").textContent = eyebrow;
+  document.getElementById("headerTitle").textContent = title;
+  document.getElementById("headerSub").textContent = sub;
 }
 
 /* ── 화면 0: 입력 검증 ── */
@@ -330,17 +416,57 @@ function checkStart(){
 }
 [studentIdEl, studentNameEl].forEach(el=>el.addEventListener("input", checkStart));
 startBtn.addEventListener("click", ()=>{
+  setHeader("plague",
+    "2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시 · 03",
+    "흑사병, 그리고 희생양",
+    "왜 하필 유대인이 탓을 뒤집어썼을까?");
+  showScreen("screen-plague");
+});
+
+/* ── 화면 1: 03 판단쓰기 ── */
+const plagueTxt = document.getElementById("plagueTxt");
+const toBridgeBtn = document.getElementById("toBridgeBtn");
+plagueTxt.addEventListener("input", ()=>{
+  toBridgeBtn.disabled = plagueTxt.value.trim().length < CONFIG.PLAGUE_MIN;
+});
+document.getElementById("plagueHintToggle").addEventListener("click", ()=>{
+  document.getElementById("plagueHintBox").classList.toggle("open");
+});
+toBridgeBtn.addEventListener("click", ()=>{
+  setHeader("plague",
+    "2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시",
+    "그런데, 교회의 권위는?",
+    "성직자도 영주도 흑사병을 피하지 못했다");
+  showScreen("screen-bridge");
+});
+
+/* ── 화면 2: 04로 이동 ── */
+document.getElementById("toCardBtn").addEventListener("click", ()=>{
   cardIdx = 0;
   currentIndex = CONFIG.START_INDEX;
   myChoices.length = 0;
+  setHeader("papal",
+    "2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시 · 04",
+    "정점에 달했던 교황권, 왜 흔들리기 시작했을까?",
+    "사건이 벌어질 때마다 교황이라면 어떻게 대응했을지 골라보자");
   showScreen("screen-card");
   renderCard();
 });
 
-/* ── 지수 바 갱신 ── */
+/* ── 권위 지수 색 보간 — 100(금색)에서 낮아질수록 잿빛으로 바래도록 ── */
+function decayColor(index){
+  const t = Math.max(0, Math.min(1, (100 - index) / 60)); // 100→40 구간에서 0→1로 보간
+  const gold = [173, 138, 61];
+  const ash  = [125, 120, 106];
+  const rgb = gold.map((g, i)=> Math.round(g + (ash[i]-g)*t));
+  return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+}
+
 function updateIndexBar(){
   document.getElementById("indexNum").textContent = currentIndex;
-  document.getElementById("indexBar").style.width = Math.max(0, currentIndex) + "%";
+  const bar = document.getElementById("indexBar");
+  bar.style.width = Math.max(0, currentIndex) + "%";
+  bar.style.backgroundColor = decayColor(currentIndex);
 }
 
 /* ── 카드 렌더 ── */
@@ -401,32 +527,66 @@ nextCardBtn.addEventListener("click", ()=>{
   }
 });
 
-/* ── 화면 2: 결과 ── */
-function showResult(){
-  const realFinal = CONFIG.START_INDEX + CARDS.reduce((sum, c)=>{
+/* ── 화면 4: 결과 + 마무리 판단 ── */
+function realFinalIndex(){
+  return CONFIG.START_INDEX + CARDS.reduce((sum, c)=>{
     const realOpt = c.options.find(o=>o.real);
     return sum + (realOpt ? realOpt.delta : 0);
   }, 0);
+}
 
+function showResult(){
+  setHeader("papal",
+    "2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시",
+    "내 지수 vs 실제 역사",
+    "그리고, 이 모든 게 중세를 끝낸 걸까?");
+
+  const realFinal = realFinalIndex();
   document.getElementById("myFinalNum").textContent = currentIndex;
   document.getElementById("realFinalNum").textContent = realFinal;
-  document.getElementById("myFinalBar").style.width = Math.max(0, currentIndex) + "%";
-  document.getElementById("realFinalBar").style.width = Math.max(0, realFinal) + "%";
+  const myBar = document.getElementById("myFinalBar");
+  const realBar = document.getElementById("realFinalBar");
+  myBar.style.width = Math.max(0, currentIndex) + "%";
+  myBar.style.backgroundColor = decayColor(currentIndex);
+  realBar.style.width = Math.max(0, realFinal) + "%";
 
   showScreen("screen-result");
 }
 
-/* ── 힌트 토글 ── */
-document.getElementById("hintToggle").addEventListener("click", ()=>{
-  document.getElementById("hintBox").classList.toggle("open");
+/* ── 마무리 1단계: 결정적 사건 선택 ── */
+const decisiveGrid = document.getElementById("decisiveGrid");
+DECISIVE_EVENTS.forEach(ev=>{
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "select-btn";
+  btn.textContent = ev;
+  btn.addEventListener("click", ()=>{
+    decisiveGrid.querySelectorAll(".select-btn").forEach(b=>b.classList.remove("chosen"));
+    btn.classList.add("chosen");
+    decisiveEvent = ev;
+    checkSubmit();
+  });
+  decisiveGrid.appendChild(btn);
 });
 
-/* ── 화면 2: 판단 글쓰기 검증 ── */
-const judgeTxt = document.getElementById("judgeTxt");
-const submitBtn = document.getElementById("submitBtn");
-judgeTxt.addEventListener("input", ()=>{
-  submitBtn.disabled = judgeTxt.value.trim().length < CONFIG.MIN_JUDGE_LEN;
+/* ── 힌트 토글(2단계) ── */
+document.getElementById("finalHintToggle").addEventListener("click", ()=>{
+  document.getElementById("finalHintBox").classList.toggle("open");
 });
+
+/* ── 제출 가능 여부 검증(마무리 1·2단계 모두 필수) ── */
+const decisiveReason = document.getElementById("decisiveReason");
+const finalTxt = document.getElementById("finalTxt");
+const submitBtn = document.getElementById("submitBtn");
+
+function checkSubmit(){
+  const ok = decisiveEvent
+    && decisiveReason.value.trim().length >= CONFIG.REASON_MIN
+    && finalTxt.value.trim().length >= CONFIG.FINAL_MIN;
+  submitBtn.disabled = !ok;
+}
+decisiveReason.addEventListener("input", checkSubmit);
+finalTxt.addEventListener("input", checkSubmit);
 
 /* ── 제출 ── */
 let PREVIEW = false;
@@ -438,20 +598,20 @@ submitBtn.addEventListener("click", async ()=>{
 
   const studentId = studentIdEl.value.trim();
   const studentName = studentNameEl.value.trim();
-  const judgeText = judgeTxt.value.trim();
-
-  const realFinal = CONFIG.START_INDEX + CARDS.reduce((sum, c)=>{
-    const realOpt = c.options.find(o=>o.real);
-    return sum + (realOpt ? realOpt.delta : 0);
-  }, 0);
+  const plagueAnswer = plagueTxt.value.trim();
+  const decisiveReasonText = decisiveReason.value.trim();
+  const finalJudgeText = finalTxt.value.trim();
+  const realFinal = realFinalIndex();
 
   const choiceSummary = myChoices.map((m,i)=>`${i+1}.${m.label}`).join(" / ");
   const diffs = myChoices.filter(m=>!m.real).map(m=>m.title);
   const diffSummary = diffs.length ? `실제 역사와 다르게 선택: ${diffs.join(", ")}` : "모두 실제 역사와 동일한 선택";
 
   const reflection =
+    `[03 판단쓰기] ${plagueAnswer}\n` +
     `[내 최종 지수] ${currentIndex} / [실제 역사] ${realFinal}\n` +
-    `[마무리 판단] ${judgeText}`;
+    `[마무리 1단계] 결정적 사건: ${decisiveEvent} / 이유: ${decisiveReasonText}\n` +
+    `[마무리 2단계] ${finalJudgeText}`;
 
   const payload = {
     gameName: CONFIG.GAME_NAME,
@@ -461,10 +621,13 @@ submitBtn.addEventListener("click", async ()=>{
     diffSummary: diffSummary,
     reflection: reflection,
     choicesJson: JSON.stringify({
+      plagueAnswer: plagueAnswer,
       choices: myChoices,
       myFinalIndex: currentIndex,
       realFinalIndex: realFinal,
-      judgeText: judgeText
+      decisiveEvent: decisiveEvent,
+      decisiveReason: decisiveReasonText,
+      finalJudgeText: finalJudgeText
     })
   };
 

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>교황권, 왜 흔들리기 시작했을까?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* crusades 저장소(같은 1차시 01 활동)와 색감 통일 — "낡은 역사책 페이지" 톤 */
+    --paper:#f3ead2;
+    --page:#fffaef;
+    --ink:#241a10;
+    --sub:#77664c;
+    --rule:#d9c79a;
+    --navy:#7c2018;
+    --navy-dark:#2a0f0c;
+    --ochre:#a3792c;
+    --ochre-dark:#7c5a1e;
+    --ochre-pale:#f1e3bf;
+    --wash:#f5e6df;
+    --seal:#5b1210;
+    --good:#3d6b3d;
+    --bad:#7c2018;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Noto Serif KR","Noto Sans KR","Malgun Gothic",serif;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, #f9f1da 0%, var(--paper) 55%, #e9d9ae 100%) fixed;
+    color:var(--ink);
+    font-size:17px;
+    font-weight:400;
+    line-height:1.75;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .ui{font-family:"Noto Sans KR",sans-serif;}
+
+  .preview-banner{
+    background:var(--seal); color:#f7ece7; text-align:center;
+    font-family:"Noto Sans KR",sans-serif; font-size:12.5px; font-weight:700; letter-spacing:.3px;
+    padding:9px; position:sticky; top:0; z-index:20; display:none;
+  }
+
+  .header{
+    background:var(--navy-dark); color:#f2e6c8; padding:28px 20px 22px; text-align:center;
+    border-bottom:3px solid var(--ochre);
+  }
+  .header .eyebrow{
+    font-family:"Noto Sans KR",sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:1.6px; color:#d8b96f; opacity:.9;
+  }
+  .header .header-rule{width:34px; height:1px; background:var(--ochre); margin:14px auto; opacity:.8;}
+  .header h1{margin:0 0 8px; font-size:21px; font-weight:700; line-height:1.45;}
+  .header p{margin:0; font-size:14px; font-style:italic; color:#cbb98a; opacity:.9;}
+
+  .wrap{max-width:640px; margin:0 auto; padding:20px 16px 90px;}
+  .screen{display:none;}
+  .screen.active{display:block; animation:fadeUp .35s ease;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .card{
+    background:var(--page); border:1px solid var(--rule); border-top:3px solid var(--ochre);
+    border-radius:6px; padding:24px 20px; margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(36,26,16,0.05), 0 10px 24px rgba(36,26,16,0.06);
+  }
+  .badge-chip{
+    display:inline-block; color:var(--navy); font-family:"Noto Sans KR",sans-serif;
+    font-size:12px; font-weight:800; letter-spacing:1.4px; padding:0 0 7px; margin-bottom:14px;
+    border-bottom:1px solid var(--ochre);
+  }
+  h2{font-size:19px; margin:0 0 10px; font-weight:700; line-height:1.5;}
+  p{margin:0 0 10px;}
+  .sub{color:var(--sub); font-size:14.5px; font-family:"Noto Sans KR",sans-serif; line-height:1.65;}
+  .era{font-family:"Noto Sans KR",sans-serif; font-size:13px; font-weight:700; color:var(--ochre-dark);}
+
+  label{
+    display:block; font-family:"Noto Sans KR",sans-serif; font-weight:700; color:var(--sub);
+    font-size:13.5px; letter-spacing:.2px; margin:16px 0 7px;
+  }
+  input[type=text]{
+    width:100%; padding:14px 15px; font-size:17px; font-family:inherit;
+    border:1px solid var(--rule); border-radius:6px; background:var(--page); min-height:48px;
+  }
+  input:focus{outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(124,32,24,0.1);}
+  textarea{
+    width:100%; min-height:90px; padding:14px 15px; font-size:16.5px;
+    border:1px solid var(--rule); border-radius:6px; background:var(--page);
+    resize:vertical; font-family:inherit; line-height:1.65;
+  }
+  textarea:focus{outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(124,32,24,0.1);}
+
+  .btn{
+    display:block; width:100%; padding:15px 20px; font-size:16px;
+    font-family:"Noto Sans KR",sans-serif; font-weight:700; letter-spacing:.3px;
+    border:none; border-radius:6px; cursor:pointer; min-height:50px; margin-top:14px;
+    transition:transform .1s ease;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--navy); color:#faf1de; box-shadow:0 3px 10px rgba(124,32,24,0.28);}
+  .btn-primary:disabled{background:#cdbfa2; color:#fff8ea; cursor:not-allowed; box-shadow:none;}
+
+  /* 권위 지수 표시 — 카드 화면 전체에서 위쪽에 고정 노출 */
+  .index-track{
+    background:var(--page); border:1px solid var(--rule); border-radius:6px;
+    padding:14px 16px; margin-bottom:16px;
+  }
+  .index-track .index-label{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:"Noto Sans KR",sans-serif; font-size:12.5px; font-weight:700; color:var(--sub);
+    margin-bottom:8px;
+  }
+  .index-track .index-num{font-size:16px; font-weight:800; color:var(--navy);}
+  .bar-outer{background:var(--ochre-pale); border-radius:5px; height:16px; overflow:hidden;}
+  .bar-inner{
+    background:linear-gradient(90deg, var(--navy), var(--ochre)); height:100%;
+    border-radius:5px; transition:width .8s cubic-bezier(.3,.8,.4,1);
+    width:100%;
+  }
+  .bar-inner.compare{background:linear-gradient(90deg, #8c7f68, #b9af9b);}
+
+  .opt-btn{
+    display:block; width:100%; text-align:left; background:var(--page); border:1px solid var(--rule);
+    border-radius:6px; padding:14px 16px; margin-top:10px; font-family:"Noto Sans KR",sans-serif;
+    font-size:15.5px; font-weight:700; color:var(--ink); cursor:pointer; min-height:50px;
+  }
+  .opt-btn:active{transform:scale(0.99);}
+  .opt-btn.chosen{border-color:var(--navy); background:var(--wash);}
+  .opt-btn:disabled{cursor:default;}
+  .opt-btn:disabled:not(.chosen){opacity:.55;}
+
+  .reveal-box{
+    display:none; background:var(--ochre-pale); border-radius:0 6px 6px 0; border-left:3px solid var(--ochre);
+    padding:14px 15px; font-size:14.5px; color:var(--ink); margin-top:14px; line-height:1.75;
+  }
+  .reveal-box.open{display:block;}
+  .reveal-box .reveal-tag{
+    font-family:"Noto Sans KR",sans-serif; font-size:12px; font-weight:800; color:var(--ochre-dark);
+    letter-spacing:.3px; margin-bottom:6px; display:block;
+  }
+
+  .hint-toggle{
+    display:inline-flex; align-items:center; gap:6px;
+    background:none; border:none; border-bottom:1px dashed var(--navy); color:var(--navy);
+    font-family:"Noto Sans KR",sans-serif; font-size:13px; font-weight:700; padding:8px 0 6px;
+    cursor:pointer; margin:14px 0 0;
+  }
+  .hint-box{
+    display:none; background:var(--ochre-pale); border-radius:0 6px 6px 0; border-left:3px solid var(--ochre);
+    padding:13px 15px; font-size:14px; font-style:italic; color:var(--sub); margin-top:8px; line-height:1.7;
+  }
+  .hint-box.open{display:block;}
+
+  .compare-row{margin-bottom:16px;}
+  .compare-row .compare-name{
+    font-family:"Noto Sans KR",sans-serif; font-size:13.5px; font-weight:700; color:var(--sub);
+    margin-bottom:6px; display:flex; justify-content:space-between;
+  }
+  .footnote{
+    font-family:"Noto Sans KR",sans-serif; font-size:13px; color:var(--sub);
+    background:var(--paper); border:1px dashed var(--ochre); border-radius:6px;
+    padding:11px 13px; margin-top:14px; line-height:1.65;
+  }
+
+  .final-msg{text-align:center;}
+  .final-msg .rank{font-size:30px; margin-bottom:8px;}
+
+  @media (min-width:760px){ body{font-size:17.5px;} }
+</style>
+</head>
+<body>
+
+<div class="preview-banner" id="previewBanner">🔍 미리보기 모드 — 제출해도 기록에 안 남아요</div>
+
+<div class="header">
+  <div class="eyebrow">2학년 세계사 · 주제16 십자군 전쟁의 결과 · 1차시</div>
+  <div class="header-rule"></div>
+  <h1>정점에 달했던 교황권, 왜 흔들리기 시작했을까?</h1>
+  <p>사건이 벌어질 때마다 교황이라면 어떻게 대응했을지 골라보자</p>
+</div>
+
+<div class="wrap">
+
+  <!-- 화면 0: 로그인 -->
+  <div class="screen active" id="screen-start">
+    <div class="card">
+      <span class="badge-chip">시작하기</span>
+      <h2>먼저 정보를 입력해줘</h2>
+      <p class="sub">교황권 지수는 100에서 시작해. 세 가지 사건을 만날 때마다 네가 고른 대응에 따라 지수가 움직여. 어떤 선택을 해도 지수는 전체적으로 떨어져 — 이 시기 교황권이 실제로 그랬으니까.</p>
+      <label>학번</label>
+      <input type="text" id="studentId" inputmode="numeric" maxlength="5" placeholder="예: 20305">
+      <label>이름</label>
+      <input type="text" id="studentName" placeholder="이름을 입력하세요">
+      <button class="btn btn-primary" id="startBtn" disabled>시작하기</button>
+    </div>
+  </div>
+
+  <!-- 화면 1: 카드(사건) 진행 -->
+  <div class="screen" id="screen-card">
+    <div class="index-track">
+      <div class="index-label"><span>⛪ 교황권 지수</span><span class="index-num" id="indexNum">100</span></div>
+      <div class="bar-outer"><div class="bar-inner" id="indexBar" style="width:100%;"></div></div>
+    </div>
+
+    <div class="card">
+      <span class="badge-chip" id="cardBadge">카드 1 / 3</span>
+      <div class="era" id="cardEra"></div>
+      <h2 id="cardTitle"></h2>
+      <p class="sub" id="cardContext"></p>
+
+      <div id="optionsBox"></div>
+
+      <div class="reveal-box" id="revealBox">
+        <span class="reveal-tag">🕊️ 실제 역사는 이랬다</span>
+        <span id="revealText"></span>
+      </div>
+
+      <button class="btn btn-primary" id="nextCardBtn" style="display:none;">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 화면 2: 결과 -->
+  <div class="screen" id="screen-result">
+    <div class="card">
+      <span class="badge-chip">결과</span>
+      <h2>내 지수 vs 실제 역사</h2>
+
+      <div class="compare-row">
+        <div class="compare-name"><span>🧑‍🎓 내가 이끈 교황권</span><span id="myFinalNum"></span></div>
+        <div class="bar-outer"><div class="bar-inner" id="myFinalBar" style="width:100%;"></div></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-name"><span>📜 실제 역사 속 교황권</span><span id="realFinalNum"></span></div>
+        <div class="bar-outer"><div class="bar-inner compare" id="realFinalBar" style="width:100%;"></div></div>
+      </div>
+
+      <div class="footnote">📌 이 시기 흑사병까지 겹치며 상황은 더 나빠졌다.</div>
+    </div>
+
+    <div class="card">
+      <span class="badge-chip">마무리 판단</span>
+      <h2>십자군 전쟁이 중세를 끝낸 사건이라고 할 수 있을까, 아니면 여러 원인 중 하나일 뿐일까?</h2>
+      <p class="sub">정답은 없어. 지금까지 본 세 사건을 근거로 네 판단을 한 줄로 써봐.</p>
+      <textarea id="judgeTxt" placeholder="네 판단을 써봐"></textarea>
+      <button type="button" class="hint-toggle" id="hintToggle">💡 막막하면 힌트 보기</button>
+      <div class="hint-box" id="hintBox">카노사의 굴욕 때(1077)랑 비교하면, 지금 교황의 처지가 뭐가 달라졌는지 생각해봐.</div>
+      <button class="btn btn-primary" id="submitBtn" disabled>제출하기</button>
+    </div>
+  </div>
+
+  <!-- 화면 3: 완료 -->
+  <div class="screen" id="screen-done">
+    <div class="card final-msg">
+      <div class="rank">📜</div>
+      <div style="font-weight:900; font-size:16px;">활동 제출 완료</div>
+      <div class="sub" style="margin-top:4px;">선생님이 네 판단을 확인할게.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+ * CONFIG
+ * ════════════════════════════════════════════════════════ */
+const CONFIG = {
+  SHEET_WEBAPP_URL: "https://script.google.com/macros/s/AKfycbyXSjCfWY_HiZFqW_OBR-FQDoIfF1z_STqyKWUI31MacHeY3u7hbirFSFDvW-5yuUHaJQ/exec",
+  GAME_NAME: "주제16_교황권게임",   // config.js CURRICULUM/커리큘럼 시트의 activity id와 반드시 일치시킬 것
+  START_INDEX: 100,
+  MIN_JUDGE_LEN: 8
+};
+
+/* ── 사건 카드 3장 (교과서 근거 — 핸드오프 §3, 효니 확인 완료: 카드①은 "방관 vs 개입 시도" 축) ──
+ * 각 옵션의 delta는 모두 음수 — 어떤 선택을 해도 지수는 떨어진다(사실 왜곡 방지, 핸드오프 §3 절대 원칙).
+ * real:true 옵션 = 실제 역사에서 있었던 대응. reveal 문구는 선택과 무관하게 항상 동일하게 노출한다
+ *   (이 게임은 "다른 선택을 했다면 어떻게 됐을까"를 지어내는 대체역사 게임이 아니라, 예측 후 실제 역사를
+ *   확인하는 게임이라 reveal은 사실 그대로 고정한다). */
+const CARDS = [
+  {
+    era: "1202~1204",
+    title: "4차 십자군, 콘스탄티노폴리스 약탈",
+    context: "성지로 가야 할 십자군이 방향을 바꿔 같은 크리스트교 국가인 비잔티움 제국의 수도 콘스탄티노폴리스를 약탈했다. '성전'을 명분으로 모은 군대가 크리스트교 형제 나라를 공격한 것이다. 교황은 이 사건을 어떻게 처리할까?",
+    options: [
+      { key: "A", label: "방관한다 — 눈감아 준다", delta: -10, real: false },
+      { key: "B", label: "막으려 한다 — 경고와 파문으로 제지 시도", delta: -15, real: true }
+    ],
+    reveal: "인노첸시오 3세는 십자군에게 크리스트교 국가를 공격하지 말라고 경고했고, 이후 참여자들을 파문하기까지 했다. 하지만 이미 벌어진 약탈은 되돌릴 수 없었고, '성지 탈환'이라는 명분에는 스스로 낸 큰 흠집만 남았다."
+  },
+  {
+    era: "12세기 말 ~",
+    title: "예루살렘 탈환, 최종 실패",
+    context: "여러 차례의 십자군 원정에도 예루살렘은 다시 크리스트교 세력의 손에 들어오지 않았다. 애초 교황이 내세운 목표 — 성지 탈환 — 자체가 흔들리고 있다. 교황은 이 상황에서 어떤 선택을 할까?",
+    options: [
+      { key: "A", label: "계속 원정을 시도한다", delta: -20, real: true },
+      { key: "B", label: "탈환을 포기하고 다른 방식을 찾는다", delta: -15, real: false }
+    ],
+    reveal: "그 뒤로도 여러 차례 원정이 이어졌지만, 예루살렘은 끝내 다시 크리스트교 세력의 손에 들어오지 않았다. 애초 내세운 목표 자체가 실패로 끝나며 교황의 권위는 크게 흔들렸다."
+  },
+  {
+    era: "14세기 초",
+    title: "프랑스 왕의 성직자 과세 시도",
+    context: "프랑스 왕이 전쟁 비용을 마련하려고 성직자에게도 세금을 매기려 한다. 교회 재산에 손을 대려는 왕의 시도에 교황은 맞설 것인가, 물러설 것인가?",
+    options: [
+      { key: "A", label: "강하게 반발한다 — 교서로 맞선다", delta: -25, real: true },
+      { key: "B", label: "타협한다 — 양보한다", delta: -20, real: false }
+    ],
+    reveal: "교황 보니파시오 8세는 교서(우남 상탐)로 강하게 반발했다. 그러나 프랑스 왕은 군대를 보내 교황을 붙잡았고(아나니 사건), 뒤이어 교황청 자체가 아비뇽으로 옮겨져 프랑스 왕의 통제 아래 놓였다."
+  }
+];
+
+let cardIdx = 0;
+let currentIndex = CONFIG.START_INDEX;
+const myChoices = []; // { key, delta, real, label }
+
+/* ── 화면 전환 ── */
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ── 화면 0: 입력 검증 ── */
+const studentIdEl = document.getElementById("studentId");
+const studentNameEl = document.getElementById("studentName");
+const startBtn = document.getElementById("startBtn");
+
+function checkStart(){
+  startBtn.disabled = !(studentIdEl.value.trim() && studentNameEl.value.trim());
+}
+[studentIdEl, studentNameEl].forEach(el=>el.addEventListener("input", checkStart));
+startBtn.addEventListener("click", ()=>{
+  cardIdx = 0;
+  currentIndex = CONFIG.START_INDEX;
+  myChoices.length = 0;
+  showScreen("screen-card");
+  renderCard();
+});
+
+/* ── 지수 바 갱신 ── */
+function updateIndexBar(){
+  document.getElementById("indexNum").textContent = currentIndex;
+  document.getElementById("indexBar").style.width = Math.max(0, currentIndex) + "%";
+}
+
+/* ── 카드 렌더 ── */
+const optionsBox = document.getElementById("optionsBox");
+const revealBox = document.getElementById("revealBox");
+const revealText = document.getElementById("revealText");
+const nextCardBtn = document.getElementById("nextCardBtn");
+
+function renderCard(){
+  const c = CARDS[cardIdx];
+  document.getElementById("cardBadge").textContent = `카드 ${cardIdx+1} / ${CARDS.length}`;
+  document.getElementById("cardEra").textContent = c.era;
+  document.getElementById("cardTitle").textContent = c.title;
+  document.getElementById("cardContext").textContent = c.context;
+  updateIndexBar();
+
+  revealBox.classList.remove("open");
+  revealText.textContent = "";
+  nextCardBtn.style.display = "none";
+  nextCardBtn.textContent = (cardIdx === CARDS.length - 1) ? "결과 보기 →" : "다음 →";
+
+  optionsBox.innerHTML = "";
+  c.options.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "opt-btn";
+    btn.textContent = opt.label;
+    btn.addEventListener("click", ()=> chooseOption(opt, btn));
+    optionsBox.appendChild(btn);
+  });
+}
+
+function chooseOption(opt, btn){
+  // 이미 고른 카드면 무시(카드 되돌아가기 없음, 핸드오프 §8)
+  if (optionsBox.querySelector(".opt-btn.chosen")) return;
+
+  btn.classList.add("chosen");
+  optionsBox.querySelectorAll(".opt-btn").forEach(b=>{ if (b!==btn) b.disabled = true; });
+  btn.disabled = true;
+
+  currentIndex += opt.delta;
+  updateIndexBar();
+
+  const c = CARDS[cardIdx];
+  myChoices.push({ key: opt.key, label: opt.label, delta: opt.delta, real: opt.real, title: c.title });
+
+  revealText.textContent = c.reveal;
+  revealBox.classList.add("open");
+  nextCardBtn.style.display = "block";
+}
+
+nextCardBtn.addEventListener("click", ()=>{
+  cardIdx++;
+  if (cardIdx < CARDS.length){
+    renderCard();
+  } else {
+    showResult();
+  }
+});
+
+/* ── 화면 2: 결과 ── */
+function showResult(){
+  const realFinal = CONFIG.START_INDEX + CARDS.reduce((sum, c)=>{
+    const realOpt = c.options.find(o=>o.real);
+    return sum + (realOpt ? realOpt.delta : 0);
+  }, 0);
+
+  document.getElementById("myFinalNum").textContent = currentIndex;
+  document.getElementById("realFinalNum").textContent = realFinal;
+  document.getElementById("myFinalBar").style.width = Math.max(0, currentIndex) + "%";
+  document.getElementById("realFinalBar").style.width = Math.max(0, realFinal) + "%";
+
+  showScreen("screen-result");
+}
+
+/* ── 힌트 토글 ── */
+document.getElementById("hintToggle").addEventListener("click", ()=>{
+  document.getElementById("hintBox").classList.toggle("open");
+});
+
+/* ── 화면 2: 판단 글쓰기 검증 ── */
+const judgeTxt = document.getElementById("judgeTxt");
+const submitBtn = document.getElementById("submitBtn");
+judgeTxt.addEventListener("input", ()=>{
+  submitBtn.disabled = judgeTxt.value.trim().length < CONFIG.MIN_JUDGE_LEN;
+});
+
+/* ── 제출 ── */
+let PREVIEW = false;
+
+submitBtn.addEventListener("click", async ()=>{
+  const btn = submitBtn;
+  btn.disabled = true;
+  btn.textContent = "제출 중...";
+
+  const studentId = studentIdEl.value.trim();
+  const studentName = studentNameEl.value.trim();
+  const judgeText = judgeTxt.value.trim();
+
+  const realFinal = CONFIG.START_INDEX + CARDS.reduce((sum, c)=>{
+    const realOpt = c.options.find(o=>o.real);
+    return sum + (realOpt ? realOpt.delta : 0);
+  }, 0);
+
+  const choiceSummary = myChoices.map((m,i)=>`${i+1}.${m.label}`).join(" / ");
+  const diffs = myChoices.filter(m=>!m.real).map(m=>m.title);
+  const diffSummary = diffs.length ? `실제 역사와 다르게 선택: ${diffs.join(", ")}` : "모두 실제 역사와 동일한 선택";
+
+  const reflection =
+    `[내 최종 지수] ${currentIndex} / [실제 역사] ${realFinal}\n` +
+    `[마무리 판단] ${judgeText}`;
+
+  const payload = {
+    gameName: CONFIG.GAME_NAME,
+    studentId: studentId,
+    studentName: studentName,
+    choiceSummary: choiceSummary,
+    diffSummary: diffSummary,
+    reflection: reflection,
+    choicesJson: JSON.stringify({
+      choices: myChoices,
+      myFinalIndex: currentIndex,
+      realFinalIndex: realFinal,
+      judgeText: judgeText
+    })
+  };
+
+  if (!PREVIEW) {
+    try{
+      if (CONFIG.SHEET_WEBAPP_URL && CONFIG.SHEET_WEBAPP_URL.indexOf("http") === 0) {
+        const res = await fetch(CONFIG.SHEET_WEBAPP_URL, { method:"POST", body: JSON.stringify(payload) });
+        if (!res.ok) throw new Error(`서버 응답 오류 (status ${res.status})`);
+        const json = await res.json();
+        if (!json || json.result !== "success") throw new Error((json && json.message) || "백엔드가 저장 실패를 반환함");
+      }
+    }catch(err){
+      console.log("전송 실패(콘솔 확인용):", err);
+      btn.disabled = false;
+      btn.textContent = "다시 제출하기";
+      alert("기록 저장에 실패했어. 인터넷 연결을 확인하고 다시 눌러줘!");
+      return;
+    }
+  } else {
+    console.log("[미리보기] 실제 전송 안 함:", payload);
+  }
+
+  showScreen("screen-done");
+});
+
+/* ── URL 파라미터 자동 채움 / 미리보기 모드 ──
+ * 주의: 위쪽 const(studentIdEl 등)를 참조하므로, 반드시 그 선언과 이벤트 바인딩이
+ * 모두 끝난 뒤(스크립트 맨 아래)에 호출해야 함. 안 그러면 TDZ 에러로 전체가 멈춤. */
+function init(){
+  const params = new URLSearchParams(location.search);
+  const sid = params.get("sid") || "";
+  const name = params.get("name") || "";
+  if (sid) studentIdEl.value = sid;
+  if (name) studentNameEl.value = name;
+  checkStart();
+
+  if (params.get("preview") === "1") {
+    PREVIEW = true;
+    document.getElementById("previewBanner").style.display = "block";
+    if (!sid) studentIdEl.value = "20301";
+    if (!name) studentNameEl.value = "교사미리보기";
+    checkStart();
+  }
+}
+
+/* ── 진입점: 모든 선언·바인딩이 끝난 뒤 마지막에 실행 ── */
+init();
+</script>
+
+</body>
+</html>

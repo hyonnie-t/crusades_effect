@@ -390,7 +390,9 @@
  * ════════════════════════════════════════════════════════ */
 const CONFIG = {
   SHEET_WEBAPP_URL: "https://script.google.com/macros/s/AKfycbyXSjCfWY_HiZFqW_OBR-FQDoIfF1z_STqyKWUI31MacHeY3u7hbirFSFDvW-5yuUHaJQ/exec",
-  GAME_NAME: "주제16_0304_흑사병교황권게임",   // config.js CURRICULUM/커리큘럼 시트의 activity id와 반드시 일치시킬 것(03+04 통합 활동 하나로 등록)
+  // history26_backend/code.gs의 커리큘럼 마이그레이션 스냅샷에 등록된 실제 활동id
+  // (['2','교황권자원게임','교황권 자원 게임', ...]) 그대로 사용 — 지어낸 이름 쓰면 대시보드에서 안 잡힘.
+  GAME_NAME: "교황권자원게임",
   START_INDEX: 100,
   PLAGUE_MIN: 10,      // 03 판단쓰기 최소 글자 수
   REASON_MIN: 8,       // 마무리 1단계 이유 최소 글자 수
